@@ -79,7 +79,7 @@ argocd app create management-apps \
     --repo git@github.com:turtacn/bm-k8s.git \
     --path applications/management --dest-namespace argo-cd \
     --dest-server https://kubernetes.default.svc \
-    --revision "main" --sync-policy automated
+    --revision "dev" --sync-policy automated
 
 argocd app sync management-apps
 argocd app get management-apps --hard-refresh
