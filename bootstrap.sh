@@ -73,10 +73,10 @@ echo $pass
 
 argocd login localhost:8080 --username admin --password $pass --insecure
 
-argocd repo add git@github.com:cloudbase/k8sbm.git \
+argocd repo add git@github.com:turtacn/bm-k8s.git \
     --ssh-private-key-path ~/.ssh/id_rsa
 argocd app create management-apps \
-    --repo git@github.com:cloudbase/k8sbm.git \
+    --repo git@github.com:turtacn/bm-k8s.git \
     --path applications/management --dest-namespace argo-cd \
     --dest-server https://kubernetes.default.svc \
     --revision "main" --sync-policy automated
