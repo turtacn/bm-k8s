@@ -282,7 +282,7 @@ configs:
 
     # -- The name of the default role which Argo CD will falls back to, when authorizing API requests (optional).
     # If omitted or empty, users may be still be able to login, but will see no apps, projects, etc...
-    policy.default: ''
+    # policy.default: ''
 
     # -- File containing user-defined policies and role definitions.
     # @default -- `''` (See [values.yaml])
