@@ -65,3 +65,21 @@ helm upgrade --install argo-cd \
 until kubectl wait deployment -n argo-cd argo-cd-argocd-server --for condition=Available=True --timeout=90s; do sleep 1; done
 until kubectl wait deployment -n argo-cd argo-cd-argocd-applicationset-controller --for condition=Available=True --timeout=90s; do sleep 1; done
 until kubectl wait deployment -n argo-cd argo-cd-argocd-repo-server --for condition=Available=True --timeout=90s; do sleep 1; done
+
+kubectl port-forward service/argo-cd-argocd-server  8080:80 -n argo-argocd &
+
+pass=$(kubectl -n argo-cd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo $pass
+
+argocd login localhost:8080 --username admin --password $pass --insecure
+
+argocd repo add git@github.com:cloudbase/k8sbm.git \
+    --ssh-private-key-path ~/.ssh/id_rsa
+argocd app create management-apps \
+    --repo git@github.com:cloudbase/k8sbm.git \
+    --path applications/management --dest-namespace argo-cd \
+    --dest-server https://kubernetes.default.svc \
+    --revision "main" --sync-policy automated
+
+argocd app sync management-apps
+argocd app get management-apps --hard-refresh
