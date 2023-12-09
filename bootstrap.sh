@@ -66,7 +66,7 @@ until kubectl wait deployment -n argo-cd argo-cd-argocd-server --for condition=A
 until kubectl wait deployment -n argo-cd argo-cd-argocd-applicationset-controller --for condition=Available=True --timeout=90s; do sleep 1; done
 until kubectl wait deployment -n argo-cd argo-cd-argocd-repo-server --for condition=Available=True --timeout=90s; do sleep 1; done
 
-kubectl port-forward service/argo-cd-argocd-server  8080:80 -n argo-argocd &
+kubectl port-forward service/argo-cd-argocd-server  8080:80 -n argo-cd &
 
 pass=$(kubectl -n argo-cd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 echo $pass
