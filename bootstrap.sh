@@ -84,3 +84,6 @@ argocd app create management-apps \
 
 argocd app sync management-apps
 argocd app get management-apps --hard-refresh
+
+argocd app sync tink-stack
+until kubectl wait deployment -n tink-system tink-stack --for condition=Available=True --timeout=90s; do sleep 1; done
