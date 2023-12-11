@@ -73,9 +73,17 @@ echo $pass
 
 argocd login localhost:8080 --username admin --password $pass --insecure
 
-argocd repo add git@github.com:turtacn/bm-k8s.git --ssh-private-key-path ~/.ssh/id_rsa
+#argocd repo add git@github.com:turtacn/bm-k8s.git --ssh-private-key-path ~/.ssh/id_rsa
+#argocd app create management-apps \
+#    --repo git@github.com:turtacn/bm-k8s.git \
+#    --path applications/management --dest-namespace argo-cd \
+#    --dest-server https://kubernetes.default.svc \
+#    --revision "dev" --sync-policy automated
+
+
+argocd repo add https://github.com/turtacn/bm-k8s.git --username turtacn --password jdIkb21jb? --insecure
 argocd app create management-apps \
-    --repo git@github.com:turtacn/bm-k8s.git \
+    --repo https://github.com/turtacn/bm-k8s.git \
     --path applications/management --dest-namespace argo-cd \
     --dest-server https://kubernetes.default.svc \
     --revision "dev" --sync-policy automated
