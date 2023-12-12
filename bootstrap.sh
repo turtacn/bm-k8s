@@ -105,7 +105,6 @@ providers:
     url: "https://github.com/tinkerbell/cluster-api-provider-tinkerbell/releases/v0.4.0/infrastructure-components.yaml"
     type: "InfrastructureProvider"
 EOF
-exit
 
 export EXP_KUBEADM_BOOTSTRAP_FORMAT_IGNITION="true"
 clusterctl init --infrastructure tinkerbell -v 5
