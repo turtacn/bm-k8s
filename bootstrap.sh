@@ -85,7 +85,9 @@ argocd app create management-apps \
 
 
 argocd app sync management-apps
-argocd app get management-apps --hard-refresh
+
+# 太卡时间了
+# argocd app get management-apps --hard-refresh
 
 ##创建项目区分管理更好
 #argocd proj create management
