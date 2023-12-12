@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 # step 0 adaptive for killercoda
 cp /usr/local/bin/kubectl ./
 rm -rf /usr/local/bin/helm
