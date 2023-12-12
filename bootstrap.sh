@@ -85,10 +85,49 @@ argocd app create management-apps \
 argocd app sync management-apps
 argocd app get management-apps --hard-refresh
 
+##创建项目区分管理更好
+#argocd proj create management
 
-argocd proj create management
-#--dest https://kubernetes.default.svc,tink-system \
-#  --src https://github.com/turtacn/bm-k8s.git
 
+# Install Bare metal as a Service
 argocd app sync tink-stack
 until kubectl wait deployment -n tink-system tink-stack --for condition=Available=True --timeout=90s; do sleep 1; done
+
+
+
+# Enable Cluster API
+export TINKERBELL_IP="10.8.10.130"
+
+mkdir -p ~/.cluster-api
+cat > ~/.cluster-api/clusterctl.yaml <<EOF
+providers:
+  - name: "tinkerbell"
+    url: "https://github.com/tinkerbell/cluster-api-provider-tinkerbell/releases/v0.4.0/infrastructure-components.yaml"
+    type: "InfrastructureProvider"
+EOF
+exit
+
+export EXP_KUBEADM_BOOTSTRAP_FORMAT_IGNITION="true"
+clusterctl init --infrastructure tinkerbell -v 5
+until kubectl wait deployment -n capt-system capt-controller-manager --for condition=Available=True --timeout=90s; do sleep 1; done
+
+# Hardware definitions
+argocd app sync hardware
+argocd app sync machine
+
+
+# Deploying the workload cluster
+# Now we are ready to initialize the Cluster API workflows that will end up creating the K8S Workload Cluster:
+
+until argocd app sync workload-cluster;  do sleep 1; done
+clusterctl get kubeconfig kub-poc -n tink-system > ~/kub-poc.kubeconfig
+
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node -A; do sleep 1; done
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut01-altra; do sleep 1; done
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut02-altra; do sleep 1; done
+until argocd app sync workload-cluster;  do sleep 1; done
+clusterctl get kubeconfig kub-poc -n tink-system > ~/kub-poc.kubeconfig
+
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node -A; do sleep 1; done
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut01-altra; do sleep 1; done
+until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut02-altra; do sleep 1; done
