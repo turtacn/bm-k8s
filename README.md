@@ -1,2 +1,2 @@
 # bm-k8s
-bare metal kubernetes
+IaC of Bare Metal Kubernetes

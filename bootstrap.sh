@@ -130,3 +130,32 @@ clusterctl get kubeconfig kub-poc -n tink-system > ~/kub-poc.kubeconfig
 until kubectl --kubeconfig ~/kub-poc.kubeconfig get node -A; do sleep 1; done
 until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut01-altra; do sleep 1; done
 until kubectl --kubeconfig ~/kub-poc.kubeconfig get node sut02-altra; do sleep 1; done
+
+# Adding the workload cluster in ArgoCD
+argocd cluster add kub-poc-admin@kub-poc \
+   --kubeconfig ~/kub-poc.kubeconfig \
+   --server localhost:8080 \
+   --insecure --yes
+
+argocd app create workload-cluster-apps \
+    --repo git@github.com:turtacn/bm-k8s.git \
+    --path applications/workload --dest-namespace argo-cd \
+    --dest-server https://kubernetes.default.svc \
+    --revision "dev" --sync-policy automated
+
+argocd app sync bird
+until kubectl get CiliumLoadBalancerIPPool --kubeconfig ~/kub-poc.kubeconfig || (argocd app sync cilium-manifests && argocd app sync cilium-kub-poc); do sleep 1; done
+
+# Storage Configuration
+kubectl --kubeconfig ~/kub-poc.kubeconfig patch node sut01-altra -p '{"spec":{"taints":[]}}' || true
+
+argocd app sync rook-ceph-operator
+until kubectl --kubeconfig ~/kub-poc.kubeconfig wait deployment -n rook-ceph rook-ceph-operator --for condition=Available=True --timeout=90s; do sleep 1; done
+
+KUBECONFIG=~/kub-poc.kubeconfig kubectl node-shell sut01-altra -- sh -c 'export DISK="/dev/nvme1n1" && echo "w" | fdisk $DISK && sgdisk --zap-all $DISK && blkdiscard $DISK || sudo dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync && partprobe $DISK && rm -rf /var/lib/rook'
+
+KUBECONFIG=~/kub-poc.kubeconfig kubectl node-shell sut02-altra -- sh -c 'export DISK="/dev/nvme1n1" && echo "w" | fdisk $DISK && sgdisk --zap-all $DISK && blkdiscard $DISK || sudo dd if=/dev/zero of="$DISK" bs=1M count=100 oflag=direct,dsync && partprobe $DISK && rm -rf /var/lib/rook'
+
+argocd app sync rook-ceph-cluster
+
+until kubectl  --kubeconfig ~/kub-poc.kubeconfig -n rook-ceph exec -it deploy/rook-ceph-tools -- ceph status; do sleep 1; done
