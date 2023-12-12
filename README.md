@@ -1,5 +1,5 @@
 # bm-k8s
-IaC of Bare Metal Kubernetes
+Infrastructure as Code (IaC) of Bare Metal Kubernetes
 
 
 ##
