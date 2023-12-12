@@ -2,12 +2,19 @@
 
 set -x
 
-# step 0 adaptive for killercoda
+# step 0: adaptation for killercoda testing env.
+
 cp /usr/local/bin/kubectl ./
 rm -rf /usr/local/bin/helm
 
 k3s-uninstall.sh
 cp ./kubectl /usr/local/bin/
+
+
+#########################################################
+###################      主体步骤     ####################
+#########################################################
+
 
 # Determining the architecture
 ARCH=$(dpkg-architecture -q DEB_BUILD_ARCH)
@@ -89,7 +96,7 @@ argocd app sync management-apps
 # 太卡时间了
 # argocd app get management-apps --hard-refresh
 
-##创建项目区分管理更好
+## 创建项目区分管理更好
 #argocd proj create management
 
 
