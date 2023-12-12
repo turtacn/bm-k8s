@@ -18,5 +18,6 @@ Infrastructure as Code (IaC) of Bare Metal Kubernetes
 * 支持Rook-Ceph裸金属存算分离集群
 * 客户集群三大插件管理：CNI、CSI、Device插件
 * 统一管控面在底座集群
+* 云原生BMaaS方案Tinkerbell(golang)集成
 
  
