@@ -11,7 +11,8 @@ spec:
   destination:
     namespace: tink-system
     server: https://kubernetes.default.svc
-  project: tinkerbell
+  project: default
+  #project: tinkerbell
   source:
     path: config/management/hardware
     repoURL: https://git.mgmt.kub-poc.local/gitea_admin/k8s-metal.git

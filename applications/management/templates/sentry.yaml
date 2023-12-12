@@ -11,7 +11,8 @@ spec:
   destination:
     namespace: {{ .Values.sentry.namespace }}
     server: https://kubernetes.default.svc
-  project: management
+  project: default
+  #project: management
   source:
     chart: sentry
     repoURL: https://sentry-kubernetes.github.io/charts

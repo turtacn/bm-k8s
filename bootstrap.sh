@@ -85,5 +85,10 @@ argocd app create management-apps \
 argocd app sync management-apps
 argocd app get management-apps --hard-refresh
 
+
+argocd proj create management
+#--dest https://kubernetes.default.svc,tink-system \
+#  --src https://github.com/turtacn/bm-k8s.git
+
 argocd app sync tink-stack
 until kubectl wait deployment -n tink-system tink-stack --for condition=Available=True --timeout=90s; do sleep 1; done

@@ -13,7 +13,8 @@ spec:
   destination:
     namespace: argo-cd
     server: https://kubernetes.default.svc
-  project: workload
+  project: default
+  #project: workload
   source:
     repoURL: 'https://git.mgmt.kub-poc.local/gitea_admin/k8s-metal.git'
     path: applications/workload

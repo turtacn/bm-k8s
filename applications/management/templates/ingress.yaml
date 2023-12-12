@@ -11,7 +11,8 @@ spec:
   destination:
     namespace: {{ .Values.ingress.namespace }}
     server: https://kubernetes.default.svc
-  project: management
+  project: default
+  #project: management
   source:
     chart: ingress-nginx
     repoURL: https://kubernetes.github.io/ingress-nginx
